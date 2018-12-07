@@ -1,0 +1,40 @@
+version: '2.1'
+
+services:
+
+  web:
+    image: longu17/web
+    volumes:
+      - ./web/www:/usr/share/nginx/html/www
+    ports:
+      - 443:443
+    depends_on:
+            db:
+                condition: service_healthy  
+   
+
+  backend:
+    image: longu17/backend
+    volumes:
+      - ./application:/usr/src/app
+    ports:
+      - 3300:3300
+    depends_on:
+            db:
+                condition: service_healthy
+
+
+  db:
+    image: longu17/db
+    volumes:
+      - ./database:/usr/src/app
+    ports:
+      - 3307:3306  
+    healthcheck:
+        test: "/usr/bin/mysql --user=user --password=123 --execute \"SHOW DATABASES;\""
+        interval: 2s
+        timeout: 20s
+        retries: 10
+
+      
+
